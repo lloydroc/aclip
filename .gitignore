@@ -50,3 +50,4 @@ src/.deps
 src/test_become_daemon
 config.h
 tags
+src/aclip
