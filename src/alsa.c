@@ -54,7 +54,14 @@ alsa_pcm_parameters_set(struct Alsa *alsa)
   alsa->pcm_buffer = malloc(alsa->pcm_buffer_size);
   if(alsa->pcm_buffer == 0)
   {
-    perror("malloc");
+    perror("malloc ALSA PCM Buffer");
+    return 1;
+  }
+
+  alsa->prev_pcm_buffer = malloc(alsa->pcm_buffer_size);
+  if(alsa->prev_pcm_buffer == 0)
+  {
+    perror("malloc ALSA PCM Previous Buffer");
     return 1;
   }
 

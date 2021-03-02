@@ -3,8 +3,12 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include <time.h>
+
+#include "wavefile.h"
 
 struct Sample
 {
@@ -20,6 +24,8 @@ struct Clip
   struct Sample thresh_first, thresh_current;
   time_t thresh_first_time;
   unsigned long sample_counter;
+  FILE *file;
+  char *filename;
 };
 
 int
@@ -29,11 +35,12 @@ bool
 clip_under_threshold(struct Clip *clip, int16_t pcm_buffer[], size_t pcm_buffer_size);
 
 int
-clip_keep_recording(struct Clip *clip);
+clip_wavfile_create(struct Clip *clip, struct wavheader *header, char *pcm_buffer_first, size_t pcm_buffer_size);
 
-/*
 int
-clip_generate_wavfile(struct Clip *clip, char *pcm_buffer_first, 
-*/
+clip_wavfile_write(struct Clip *clip, char *pcm_buffer, size_t pcm_buffer_size);
+
+int
+clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer, size_t pcm_buffer_size);
 
 #endif

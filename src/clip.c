@@ -14,12 +14,14 @@ clip_under_threshold(struct Clip *clip, int16_t pcm_buffer[], size_t pcm_buffer_
 {
   int16_t pcm_value;
   bool under_threshold = true;
+  clip->prev_recording = clip->recording;
   for(int i=0; i<pcm_buffer_size; i++)
   {
     pcm_value = pcm_buffer[i];
     bool meets_thresh = pcm_value > clip->thresh_pos || pcm_value < clip->thresh_neg;
     if(meets_thresh)
     {
+      printf("meets thresh ");
       under_threshold = false;
       clip->thresh_current.t = clip->sample_counter+i;
       clip->thresh_current.y = pcm_value;
@@ -31,8 +33,6 @@ clip_under_threshold(struct Clip *clip, int16_t pcm_buffer[], size_t pcm_buffer_
         clip->prev_recording = false;
         clip->thresh_first_time = time(NULL);
       }
-      else
-        clip->prev_recording = true;
     }
   }
   clip->sample_counter += pcm_buffer_size;
@@ -40,17 +40,21 @@ clip_under_threshold(struct Clip *clip, int16_t pcm_buffer[], size_t pcm_buffer_
 }
 
 int
-clip_keep_recording(struct Clip *clip)
+clip_wavfile_create(struct Clip *clip, struct wavheader *header, char *pcm_buffer_first, size_t pcm_buffer_size)
 {
-  assert(clip->recording == true);
-  assert(clip->sample_counter > clip->thresh_current.t);
-
-  unsigned long diff = clip->sample_counter - clip->thresh_current.t;
-
-  // TODO need to set from options
-  if(diff > 16000)
-  {
-    return 0;
-  }
-  return 1;
+  return 0;
 }
+
+int
+clip_wavfile_write(struct Clip *clip, char *pcm_buffer, size_t pcm_buffer_size)
+{
+  return 0;
+}
+
+int
+clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer, size_t pcm_buffer_size)
+{
+  return 0;
+}
+
+

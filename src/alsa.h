@@ -14,7 +14,7 @@ struct Alsa
   unsigned int num_channels;
   snd_pcm_uframes_t frames;
   size_t pcm_buffer_size;
-  char *pcm_buffer;
+  char *pcm_buffer, *prev_pcm_buffer;
 };
 
 int
