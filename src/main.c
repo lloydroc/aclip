@@ -69,12 +69,15 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  clip.thresh_pos = 1000;
-  clip.thresh_neg = -1000;
+  clip.thresh_pos = opts.thresh_y;
+  clip.thresh_neg = -1*opts.thresh_y;
+  clip.thresh_t = (unsigned long) opts.thresh_x_seconds * alsa.sampling_rate;
   clip.recording = 0;
 
   wavgen_header_init(&header);
   wavgen_set_sampling(&header, alsa.num_channels, alsa.sampling_rate, 16);
+
+  printf("Box: (y,t)=(%d,%ld)\n", clip.thresh_pos, clip.thresh_t);
 
   int16_t *sample_ptr;
   while(1)
@@ -94,7 +97,7 @@ int main(int argc, char *argv[])
     }
     else if(clip.prev_recording == false && clip.recording == true)
     {
-      printf("creating wavfile\n");
+      printf("creating wavfile ... ");
       clip_wavfile_create(&clip, &header, alsa.prev_pcm_buffer, alsa.pcm_buffer_size);
     }
     else if(clip.prev_recording == true && clip.recording == true)
@@ -103,7 +106,7 @@ int main(int argc, char *argv[])
     }
     else if(clip.prev_recording == true && clip.recording == false)
     {
-      printf("closing wavfile\n");
+      printf("closing wavfile %ld frames\n", clip.frame_counter);
       clip_wavfile_close(&clip, &header, alsa.pcm_buffer, alsa.pcm_buffer_size);
     }
   }

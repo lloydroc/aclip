@@ -7,6 +7,8 @@ void options_usage(char *progname)
 -h, --help                  Print this menu\n\
 --sampling-rate INTEGER     Sampling Rate [8000]\n\
 --num-channels INTEGER      Number of Channels [1]\n\
+--y-thresh INTEGER          Y-Axis Threshold [1000]\n\
+--x-thresh-seconds DECIMAL  X-Axis Threshold in Seconds [3.0]\n\
 --alsa-device STRING        Alsa device to connect [default]\n\
 --record                    Unconditionally Record Audio\n\
 \n\
@@ -20,6 +22,8 @@ void options_init(struct options *options)
   options->error = 0;
   options->sampling_rate = 8000;
   options->num_channels = 1;
+  options->thresh_y = 1000;
+  options->thresh_x_seconds = 3.0;
   options->alsa_device = "default";
   options->unconditional_record = 0;
 }
@@ -31,6 +35,8 @@ void options_parse(struct options *options, int argc, char *argv[])
     {"help",                      no_argument,       0,  0 },
     {"num-channels",              required_argument, 0,  0 },
     {"sampling-rate",             required_argument, 0,  0 },
+    {"y-thresh",                  required_argument, 0,  0 },
+    {"x-thresh-seconds",          required_argument, 0,  0 },
     {"alsa-device",               required_argument, 0,  0 },
     {"record",                          no_argument, 0,  0 },
     {0,                                           0, 0,  0 }
@@ -57,6 +63,16 @@ void options_parse(struct options *options, int argc, char *argv[])
           if(strcmp("num-channels", long_options[option_index].name) == 0)
           {
             options->num_channels = atoi(optarg);
+            break;
+          }
+          if(strcmp("y-thresh", long_options[option_index].name) == 0)
+          {
+            options->thresh_y = atoi(optarg);
+            break;
+          }
+          if(strcmp("x-thresh-seconds", long_options[option_index].name) == 0)
+          {
+            options->thresh_x_seconds = atof(optarg);
             break;
           }
           if(strcmp("alsa-device", long_options[option_index].name) == 0)

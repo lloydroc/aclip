@@ -11,6 +11,8 @@ struct options {
     int error;
     unsigned int sampling_rate;
     unsigned int num_channels;
+    unsigned int thresh_y;
+    float thresh_x_seconds;
     char *alsa_device;
     int unconditional_record;
 };

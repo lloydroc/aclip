@@ -19,6 +19,9 @@ alsa_pcm_parameters_set(struct Alsa *alsa)
   int rc = 0;
   unsigned int val;
 
+  // TODO
+  alsa->frames = 8000/2/1;
+
   /* Allocate a hardware parameters object. */
   snd_pcm_hw_params_alloca(&alsa->params);
 

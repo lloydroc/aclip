@@ -12,7 +12,7 @@
 
 struct Sample
 {
-  int32_t t;
+  unsigned long t;
   int16_t y;
 };
 
@@ -21,11 +21,12 @@ struct Clip
   bool prev_recording;
   bool recording;
   int16_t thresh_pos, thresh_neg;
+  unsigned long thresh_t;
   struct Sample thresh_first, thresh_current;
   time_t thresh_first_time;
-  unsigned long sample_counter;
+  unsigned long sample_counter, frame_counter;
   FILE *file;
-  char *filename;
+  char filename[32];
 };
 
 int
