@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
     }
     else if(clip.prev_recording == false && clip.recording == true)
     {
-      printf("creating wavfile ... ");
+      printf("recording ... ");
+      fflush(stdout);
       clip_wavfile_create(&clip, &header, alsa.prev_pcm_buffer, alsa.pcm_buffer_size);
     }
     else if(clip.prev_recording == true && clip.recording == true)
@@ -106,7 +107,7 @@ int main(int argc, char *argv[])
     }
     else if(clip.prev_recording == true && clip.recording == false)
     {
-      printf("closing wavfile %ld frames\n", clip.frame_counter);
+      printf("stopping %ld frames\n", clip.frame_counter);
       clip_wavfile_close(&clip, &header, alsa.pcm_buffer, alsa.pcm_buffer_size);
     }
   }
