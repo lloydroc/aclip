@@ -101,7 +101,7 @@ clip_wavfile_create(struct Clip *clip, struct wavheader *header, char *pcm_buffe
   written = fwrite(&header, 1, header_size, clip->file);
   if(written != header_size)
   {
-    fprintf(stderr, "bytes written %d not equal to header size %d\n", written, header_size);
+    fprintf(stderr, "bytes written %ld not equal to header size %ld\n", written, header_size);
     return 3;
   }
 
@@ -120,7 +120,7 @@ clip_wavfile_write(struct Clip *clip, char *pcm_buffer, size_t pcm_buffer_size)
   written = fwrite(pcm_buffer, 1, pcm_buffer_size, clip->file);
   if(written != pcm_buffer_size)
   {
-    fprintf(stderr, "bytes written %d not equal to PCM buffer size %d\n", written, pcm_buffer_size);
+    fprintf(stderr, "bytes written %ld not equal to PCM buffer size %ld\n", written, pcm_buffer_size);
     return 1;
   }
 
@@ -157,7 +157,7 @@ clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer
   written = fwrite(header, 1, header_size, clip->file);
   if(written != header_size)
   {
-    fprintf(stderr, "bytes written %d not equal to header size %d\n", written, header_size);
+    fprintf(stderr, "bytes written %ld not equal to header size %ld\n", written, header_size);
     ret = 3;
     goto clip_wavfile_close_exit;
   }

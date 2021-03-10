@@ -22,12 +22,13 @@ AC_TYPE_INT16_T
 AC_TYPE_INT32_T
 AC_TYPE_INT8_T
 AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-
+AC_CHECK_FUNCS([strdup])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
