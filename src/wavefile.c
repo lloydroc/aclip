@@ -154,7 +154,7 @@ wavgen_write_file(struct wavheader *header, char *filename, size_t num_bytes, in
   written = fwrite(header, 1, header_size, file);
   if(written != header_size)
   {
-    fprintf(stderr, "bytes written %ld not equal to header size %ld\n", written, header_size);
+    fprintf(stderr, "bytes written %zd not equal to header size %zd\n", written, header_size);
     ret = 1;
     goto wavgen_write_file_return;
   }

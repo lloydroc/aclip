@@ -26,7 +26,7 @@ struct Clip
   time_t thresh_first_time;
   unsigned long sample_counter, frame_counter;
   FILE *file;
-  char filename[32];
+  char filename[64];
 };
 
 int

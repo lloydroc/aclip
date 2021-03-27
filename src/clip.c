@@ -80,6 +80,29 @@ clip_get_filename(struct Clip *clip)
   return 0;
 }
 
+static int
+clip_get_filename_duration(struct Clip *clip, float seconds)
+{
+  struct tm *tmp;
+  tmp = localtime(&clip->thresh_first_time);
+  char timestr[32];
+
+  if (tmp == NULL) {
+    perror("localtime");
+    return 1;
+  }
+
+  if(strftime(timestr, sizeof(timestr), "%F-%T", tmp) == 0) {
+    fprintf(stderr, "strftime returned 0");
+    return 2;
+  }
+
+  sprintf(clip->filename, "clip_%.2f_", seconds);
+  strncat(clip->filename, timestr, sizeof(timestr)+1);
+  strncat(clip->filename, ".wav", 5);
+  return 0;
+}
+
 int
 clip_wavfile_create(struct Clip *clip, struct wavheader *header, char *pcm_buffer_first, size_t pcm_buffer_size)
 {
@@ -101,7 +124,7 @@ clip_wavfile_create(struct Clip *clip, struct wavheader *header, char *pcm_buffe
   written = fwrite(&header, 1, header_size, clip->file);
   if(written != header_size)
   {
-    fprintf(stderr, "bytes written %ld not equal to header size %ld\n", written, header_size);
+    fprintf(stderr, "bytes written %zd not equal to header size %zd\n", written, header_size);
     return 3;
   }
 
@@ -120,7 +143,7 @@ clip_wavfile_write(struct Clip *clip, char *pcm_buffer, size_t pcm_buffer_size)
   written = fwrite(pcm_buffer, 1, pcm_buffer_size, clip->file);
   if(written != pcm_buffer_size)
   {
-    fprintf(stderr, "bytes written %ld not equal to PCM buffer size %ld\n", written, pcm_buffer_size);
+    fprintf(stderr, "bytes written %zd not equal to PCM buffer size %zd\n", written, pcm_buffer_size);
     return 1;
   }
 
@@ -134,6 +157,10 @@ clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer
   long pcm_bytes;
   size_t header_size = sizeof(struct wavheader);
   ssize_t written;
+
+  // to rename the file with the duration
+  float seconds;
+  char *orig_filename, *new_filename;
 
   if(clip_wavfile_write(clip, pcm_buffer, pcm_buffer_size))
   {
@@ -157,10 +184,23 @@ clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer
   written = fwrite(header, 1, header_size, clip->file);
   if(written != header_size)
   {
-    fprintf(stderr, "bytes written %ld not equal to header size %ld\n", written, header_size);
+    fprintf(stderr, "bytes written %zd not equal to header size %zd\n", written, header_size);
     ret = 3;
     goto clip_wavfile_close_exit;
   }
+
+  pcm_bytes /= header->numChannels;
+  pcm_bytes /= header->bitsPerSample/8;
+  seconds = (float) pcm_bytes;
+  seconds /= (float) header->sampleRate;
+
+  orig_filename = strdup(clip->filename);
+  clip_get_filename_duration(clip, seconds);
+  new_filename = clip->filename;
+
+  rename(orig_filename, new_filename);
+
+  free(orig_filename);
 
 clip_wavfile_close_exit:
   fclose(clip->file);
