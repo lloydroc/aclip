@@ -13,24 +13,24 @@
  * All other fields are in little endian
  */
 struct wavheader {
-    // Riff chunk descriptor
-    char     chunkId[4];
-    uint32_t chunkSize;
-    char     format[4];
+  // Riff chunk descriptor
+  char     chunkId[4];
+  uint32_t chunkSize;
+  char     format[4];
 
-    // Format sub-chunk
-    char     subChunk1Id[4];
-    uint32_t subChunk1Size;
-    uint16_t audioFormat;
-    uint16_t numChannels;
-    uint32_t sampleRate;
-    uint32_t byteRate;
-    uint16_t blockAlign;
-    uint16_t bitsPerSample;
+  // Format sub-chunk
+  char     subChunk1Id[4];
+  uint32_t subChunk1Size;
+  uint16_t audioFormat;
+  uint16_t numChannels;
+  uint32_t sampleRate;
+  uint32_t byteRate;
+  uint16_t blockAlign;
+  uint16_t bitsPerSample;
 
-    // data sub-chunk
-    char     subChunk2Id[4];
-    uint32_t subChunk2Size;
+  // data sub-chunk
+  char     subChunk2Id[4];
+  uint32_t subChunk2Size;
 };
 
 void

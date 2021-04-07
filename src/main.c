@@ -26,9 +26,9 @@ void signal_handler(int sig)
   options_destroy(&opts);
 
   if(alsa.handle)
-  {
-    alsa_pcm_destroy(&alsa);
-  }
+    {
+      alsa_pcm_destroy(&alsa);
+    }
 
   exit(exit_status);
 }
@@ -46,10 +46,10 @@ int main(int argc, char *argv[])
   options_parse(&opts, argc, argv);
 
   if(opts.help || opts.error)
-  {
-    options_usage(argv[0]);
-    return opts.error;
-  }
+    {
+      options_usage(argv[0]);
+      return opts.error;
+    }
 
   alsa.device = opts.alsa_device;
   alsa.sampling_rate = opts.sampling_rate;
@@ -61,14 +61,14 @@ int main(int argc, char *argv[])
   /* Open PCM device for recording (capture). */
 
   if(alsa_pcm_open(&alsa))
-  {
-    exit(1);
-  }
+    {
+      exit(1);
+    }
 
   if(alsa_pcm_parameters_set(&alsa))
-  {
-    exit(1);
-  }
+    {
+      exit(1);
+    }
 
   clip.filepath = opts.filepath;
   clip.thresh_pos = opts.thresh_y;
@@ -83,36 +83,36 @@ int main(int argc, char *argv[])
 
   int16_t *sample_ptr;
   while(1)
-  {
-    rc = alsa_pcm_read(&alsa);
-    if(rc != alsa.frames)
     {
-      continue;
-    }
+      rc = alsa_pcm_read(&alsa);
+      if(rc != alsa.frames)
+	{
+	  continue;
+	}
 
-    sample_ptr = (int16_t *) alsa.pcm_buffer;
-    clip_under_threshold(&clip, sample_ptr, alsa.pcm_buffer_size/2);
+      sample_ptr = (int16_t *) alsa.pcm_buffer;
+      clip_under_threshold(&clip, sample_ptr, alsa.pcm_buffer_size/2);
 
-    if(clip.prev_recording == false && clip.recording == false)
-    {
-      memcpy(alsa.prev_pcm_buffer, alsa.pcm_buffer, alsa.pcm_buffer_size);
+      if(clip.prev_recording == false && clip.recording == false)
+	{
+	  memcpy(alsa.prev_pcm_buffer, alsa.pcm_buffer, alsa.pcm_buffer_size);
+	}
+      else if(clip.prev_recording == false && clip.recording == true)
+	{
+	  printf("recording ... ");
+	  fflush(stdout);
+	  clip_wavfile_create(&clip, &header, alsa.prev_pcm_buffer, alsa.pcm_buffer_size);
+	}
+      else if(clip.prev_recording == true && clip.recording == true)
+	{
+	  clip_wavfile_write(&clip, alsa.pcm_buffer, alsa.pcm_buffer_size);
+	}
+      else if(clip.prev_recording == true && clip.recording == false)
+	{
+	  clip_wavfile_close(&clip, &header, alsa.pcm_buffer, alsa.pcm_buffer_size);
+	  printf("wrote %ld frames to file %s\n", clip.frame_counter, clip.filename);
+	}
     }
-    else if(clip.prev_recording == false && clip.recording == true)
-    {
-      printf("recording ... ");
-      fflush(stdout);
-      clip_wavfile_create(&clip, &header, alsa.prev_pcm_buffer, alsa.pcm_buffer_size);
-    }
-    else if(clip.prev_recording == true && clip.recording == true)
-    {
-      clip_wavfile_write(&clip, alsa.pcm_buffer, alsa.pcm_buffer_size);
-    }
-    else if(clip.prev_recording == true && clip.recording == false)
-    {
-      clip_wavfile_close(&clip, &header, alsa.pcm_buffer, alsa.pcm_buffer_size);
-      printf("wrote %ld frames to file %s\n", clip.frame_counter, clip.filename);
-    }
-  }
 
   return 0;
 }

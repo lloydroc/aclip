@@ -73,64 +73,64 @@ wavgen_read_file(struct wavheader *header, char *filename, void **data)
   size_t bytes_read;
   FILE *file = fopen(filename, "r");
   if(file == NULL)
-  {
-    perror("wavgen_read_file_header: opening file");
-    return 1;
-  }
+    {
+      perror("wavgen_read_file_header: opening file");
+      return 1;
+    }
 
   bytes_read = fread(header, 1, sizeof(struct wavheader), file);
   if(bytes_read != sizeof(struct wavheader))
-  {
-    perror("error reading WAVE file header");
-    ret = 2;
-    goto close_file;
-  }
+    {
+      perror("error reading WAVE file header");
+      ret = 2;
+      goto close_file;
+    }
 
   if(strncmp(header->chunkId, "RIFF", 4))
-  {
-    fprintf(stderr, "unable to find RIFF ChunkID in file %s\n", filename);
-    ret = 3;
-    goto close_file;
-  }
+    {
+      fprintf(stderr, "unable to find RIFF ChunkID in file %s\n", filename);
+      ret = 3;
+      goto close_file;
+    }
 
   if(strncmp(header->format, "WAVE", 4))
-  {
-    fprintf(stderr, "format is not WAVE in file %s\n", filename);
-    ret = 4;
-    goto close_file;
-  }
+    {
+      fprintf(stderr, "format is not WAVE in file %s\n", filename);
+      ret = 4;
+      goto close_file;
+    }
 
   if(header->audioFormat != 1)
-  {
-    fprintf(stderr, "Audio Format is not PCM in file %s\n", filename);
-    ret = 5;
-    goto close_file;
-  }
+    {
+      fprintf(stderr, "Audio Format is not PCM in file %s\n", filename);
+      ret = 5;
+      goto close_file;
+    }
 
   if(strncmp(header->subChunk2Id, "data", 4))
-  {
-    fprintf(stderr, "subChunk2ID doesn't contain the \"data\" string in file %s\n", filename);
-    ret = 6;
-    goto close_file;
-  }
+    {
+      fprintf(stderr, "subChunk2ID doesn't contain the \"data\" string in file %s\n", filename);
+      ret = 6;
+      goto close_file;
+    }
 
   *data = malloc(header->subChunk2Size);
   if(*data == NULL)
-  {
-    perror("out of memory");
-    ret = 7;
-    goto close_file;
-  }
+    {
+      perror("out of memory");
+      ret = 7;
+      goto close_file;
+    }
 
   bytes_read = fread(*data, 1, header->subChunk2Size, file);
   if(bytes_read != header->subChunk2Size)
-  {
-    perror("error reading WAVE file data");
-    ret = 8;
-    goto close_file;
-  }
+    {
+      perror("error reading WAVE file data");
+      ret = 8;
+      goto close_file;
+    }
 
-close_file:
+ close_file:
   fclose(file);
 
   return ret;
@@ -145,30 +145,30 @@ wavgen_write_file(struct wavheader *header, char *filename, size_t num_bytes, in
 
   FILE *file = fopen(filename, "w");
   if(file == NULL)
-  {
-    perror("opening file");
-    ret = 1;
-    goto wavgen_write_file_return;
-  }
+    {
+      perror("opening file");
+      ret = 1;
+      goto wavgen_write_file_return;
+    }
 
   written = fwrite(header, 1, header_size, file);
   if(written != header_size)
-  {
-    fprintf(stderr, "bytes written %zd not equal to header size %zd\n", written, header_size);
-    ret = 1;
-    goto wavgen_write_file_return;
-  }
+    {
+      fprintf(stderr, "bytes written %zd not equal to header size %zd\n", written, header_size);
+      ret = 1;
+      goto wavgen_write_file_return;
+    }
 
   wavgen_set_data_size(header, num_bytes);
   written = fwrite(data, 1, header->subChunk2Size, file);
   if(written != header->subChunk2Size)
-  {
-    fprintf(stderr, "bytes written not equal to data size\n");
-    ret = 1;
-    goto wavgen_write_file_return;
-  }
+    {
+      fprintf(stderr, "bytes written not equal to data size\n");
+      ret = 1;
+      goto wavgen_write_file_return;
+    }
 
-wavgen_write_file_return:
+ wavgen_write_file_return:
   fclose(file);
 
   return ret;
