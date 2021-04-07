@@ -1,6 +1,7 @@
 #include "options.h"
 
-void options_usage(char *progname)
+void
+options_usage(char *progname)
 {
   printf("\nUsage: %s [OPTIONS] TEXT\n\n", progname);
   printf("Options:\n\
@@ -11,12 +12,14 @@ void options_usage(char *progname)
 --x-thresh-seconds DECIMAL  X-Axis Threshold in Seconds [3.0]\n\
 --alsa-device STRING        Alsa device to connect [default]\n\
 --record                    Unconditionally Record Audio\n\
+--out-directory STRING      Directory to save files in [.]\n\
 \n\
 ");
   return;
 }
 
-void options_init(struct options *options)
+void
+options_init(struct options *options)
 {
   options->help = 0;
   options->error = 0;
@@ -24,11 +27,25 @@ void options_init(struct options *options)
   options->num_channels = 1;
   options->thresh_y = 1000;
   options->thresh_x_seconds = 3.0;
-  options->alsa_device = "default";
+  strncpy(options->alsa_device, "default", 255);
   options->unconditional_record = 0;
+  options->filepath = NULL;
 }
 
-void options_parse(struct options *options, int argc, char *argv[])
+static int
+test_open_directory(char *testdir)
+{
+  DIR* dir = opendir(testdir);
+  if (dir) {
+    closedir(dir);
+    return 0;
+  }
+  perror(testdir);
+  return 1;
+}
+
+void
+options_parse(struct options *options, int argc, char *argv[])
 {
   int c;
   static struct option long_options[] = {
@@ -38,6 +55,7 @@ void options_parse(struct options *options, int argc, char *argv[])
     {"y-thresh",                  required_argument, 0,  0 },
     {"x-thresh-seconds",          required_argument, 0,  0 },
     {"alsa-device",               required_argument, 0,  0 },
+    {"out-directory",             required_argument, 0,  0 },
     {"record",                          no_argument, 0,  0 },
     {0,                                           0, 0,  0 }
   };
@@ -77,12 +95,28 @@ void options_parse(struct options *options, int argc, char *argv[])
           }
           if(strcmp("alsa-device", long_options[option_index].name) == 0)
           {
-            options->alsa_device = strdup(optarg);
+            strncpy(options->alsa_device, optarg, 255);
             break;
           }
           if(strcmp("record", long_options[option_index].name) == 0)
           {
             options->unconditional_record = 1;
+            break;
+          }
+          if(strcmp("out-directory", long_options[option_index].name) == 0)
+          {
+            options->filepath = strndup(optarg, 4094);
+            if(test_open_directory(options->filepath))
+            {
+              options->error = 1;
+            }
+            else
+            {
+              if(options->filepath[strlen(options->filepath)-1] != '/')
+              {
+                strcat(options->filepath, "/");
+              }
+            }
             break;
           }
 

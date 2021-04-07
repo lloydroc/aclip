@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
   alsa.device = opts.alsa_device;
   alsa.sampling_rate = opts.sampling_rate;
   alsa.num_channels = opts.num_channels;
+  alsa.bytes_per_sample = 2; // TODO Feature 1
 
   struct wavheader header;
 
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  clip.filepath = opts.filepath;
   clip.thresh_pos = opts.thresh_y;
   clip.thresh_neg = -1*opts.thresh_y;
   clip.thresh_t = (unsigned long) opts.thresh_x_seconds * alsa.sampling_rate;

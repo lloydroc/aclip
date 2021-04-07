@@ -26,7 +26,8 @@ struct Clip
   time_t thresh_first_time;
   unsigned long sample_counter, frame_counter;
   FILE *file;
-  char filename[64];
+  char filename[256]; // TODO we copy the filepath into this
+  char *filepath; // TODO Feature 2
 };
 
 int

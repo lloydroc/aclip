@@ -3,7 +3,6 @@
 int
 alsa_pcm_open(struct Alsa *alsa)
 {
-  // TODO use a #define for what represents 0
   int rc = snd_pcm_open(&alsa->handle, alsa->device, SND_PCM_STREAM_CAPTURE, 0);
   if (rc < 0)
   {
@@ -18,9 +17,12 @@ alsa_pcm_parameters_set(struct Alsa *alsa)
   int dir = 0;
   int rc = 0;
   unsigned int val;
+  unsigned int byte_rate;
 
-  // TODO
-  alsa->frames = 8000/2/1;
+  byte_rate = alsa->num_channels * alsa->bytes_per_sample;
+
+  alsa->frames = alsa->sampling_rate / byte_rate;
+  alsa->pcm_buffer_size = alsa->frames * byte_rate;
 
   /* Allocate a hardware parameters object. */
   snd_pcm_hw_params_alloca(&alsa->params);
@@ -53,7 +55,7 @@ alsa_pcm_parameters_set(struct Alsa *alsa)
   snd_pcm_hw_params_get_period_size(alsa->params, &alsa->frames, &dir);
   printf("frames: %ld\n", alsa->frames);
 
-  alsa->pcm_buffer_size = alsa->frames * 2; /* 2 bytes/sample, 1 channel */
+
   alsa->pcm_buffer = malloc(alsa->pcm_buffer_size);
   if(alsa->pcm_buffer == 0)
   {

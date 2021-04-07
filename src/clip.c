@@ -21,6 +21,7 @@ clip_under_threshold(struct Clip *clip, int16_t pcm_buffer[], size_t pcm_buffer_
     pcm_value = pcm_buffer[i];
     //printf("\rframe: %08ld value: %08d=%08d of %08d", clip->frame_counter, i, pcm_value, pcm_buffer_size);
     bool meets_thresh = pcm_value > clip->thresh_pos || pcm_value < clip->thresh_neg;
+
     if(meets_thresh)
     {
       under_threshold = false;
@@ -54,30 +55,7 @@ clip_under_threshold(struct Clip *clip, int16_t pcm_buffer[], size_t pcm_buffer_
     clip->frame_counter = 0L;
   }
 
-
   return under_threshold;
-}
-
-static int
-clip_get_filename(struct Clip *clip)
-{
-  struct tm *tmp;
-  tmp = localtime(&clip->thresh_first_time);
-  char timestr[32];
-
-  if (tmp == NULL) {
-    perror("localtime");
-    return 1;
-  }
-
-  if(strftime(timestr, sizeof(timestr), "%F-%T", tmp) == 0) {
-    fprintf(stderr, "strftime returned 0");
-    return 2;
-  }
-  sprintf(clip->filename, "clip_");
-  strncat(clip->filename, timestr, sizeof(timestr)+1);
-  strncat(clip->filename, ".wav", 5);
-  return 0;
 }
 
 static int
@@ -97,7 +75,15 @@ clip_get_filename_duration(struct Clip *clip, float seconds)
     return 2;
   }
 
-  sprintf(clip->filename, "clip_%.2f_", seconds);
+  if(seconds > 0.0)
+  {
+    sprintf(clip->filename, "%sclip_%.2f_", clip->filepath, seconds);
+  }
+  else
+  {
+    sprintf(clip->filename, "%sclip_", clip->filepath);
+  }
+
   strncat(clip->filename, timestr, sizeof(timestr)+1);
   strncat(clip->filename, ".wav", 5);
   return 0;
@@ -109,7 +95,7 @@ clip_wavfile_create(struct Clip *clip, struct wavheader *header, char *pcm_buffe
   ssize_t written;
   size_t header_size = sizeof(struct wavheader);
 
-  if(clip_get_filename(clip))
+  if(clip_get_filename_duration(clip, -1.0))
   {
     return 1;
   }

@@ -12,6 +12,7 @@ struct Alsa
   snd_pcm_hw_params_t *params;
   unsigned int sampling_rate;
   unsigned int num_channels;
+  unsigned int bytes_per_sample;
   snd_pcm_uframes_t frames;
   size_t pcm_buffer_size;
   char *pcm_buffer, *prev_pcm_buffer;
