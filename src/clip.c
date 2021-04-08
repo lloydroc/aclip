@@ -70,7 +70,8 @@ clip_get_filename_duration(struct Clip *clip, float seconds)
     return 1;
   }
 
-  if(strftime(timestr, sizeof(timestr), "%F-%T", tmp) == 0) {
+  if(strftime(timestr, sizeof(timestr), "%F-%T", tmp) == 0)
+   {
     fprintf(stderr, "strftime returned 0");
     return 2;
   }

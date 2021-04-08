@@ -6,13 +6,13 @@ options_usage(char *progname)
   printf("\nUsage: %s [OPTIONS] TEXT\n\n", progname);
   printf("Options:\n\
 -h, --help                  Print this menu\n\
---sampling-rate INTEGER     Sampling Rate [8000]\n\
+--sampling-rate INTEGER     Sampling Rate [48000]\n\
 --num-channels INTEGER      Number of Channels [1]\n\
 --y-thresh INTEGER          Y-Axis Threshold [1000]\n\
 --x-thresh-seconds DECIMAL  X-Axis Threshold in Seconds [3.0]\n\
 --alsa-device STRING        Alsa device to connect [default]\n\
 --record                    Unconditionally Record Audio\n\
---out-directory STRING      Directory to save files in [.]\n\
+--out-directory STRING      Directory to save files in [./]\n\
 \n\
 ");
   return;
@@ -23,7 +23,7 @@ options_init(struct options *options)
 {
   options->help = 0;
   options->error = 0;
-  options->sampling_rate = 8000;
+  options->sampling_rate = 48000;
   options->num_channels = 1;
   options->thresh_y = 1000;
   options->thresh_x_seconds = 3.0;
@@ -136,6 +136,10 @@ options_parse(struct options *options, int argc, char *argv[])
     }
   }
 
+  if(options->filepath == NULL)
+    {
+      options->filepath = strndup("./", 2);
+    }
   // TODO the extra unparsed options ...
 
 }
@@ -143,4 +147,5 @@ options_parse(struct options *options, int argc, char *argv[])
 void options_destroy(struct options *options)
 {
   free(options->alsa_device);
+  free(options->filepath);
 }

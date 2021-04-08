@@ -7,6 +7,7 @@ alsa_pcm_open(struct Alsa *alsa)
   if (rc < 0)
     {
       fprintf(stderr, "unable to open pcm device \"%s\": %s\n", alsa->device, snd_strerror(rc));
+      printf("run the arecord -l command to see available devices\n");
     }
   return rc;
 }
@@ -54,7 +55,6 @@ alsa_pcm_parameters_set(struct Alsa *alsa)
   printf("channels: %d ", val);
   snd_pcm_hw_params_get_period_size(alsa->params, &alsa->frames, &dir);
   printf("frames: %ld\n", alsa->frames);
-
 
   alsa->pcm_buffer = malloc(alsa->pcm_buffer_size);
   if(alsa->pcm_buffer == 0)
