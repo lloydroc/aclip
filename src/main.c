@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
   wavgen_header_init(&header);
   wavgen_set_sampling(&header, alsa.num_channels, alsa.sampling_rate, 16);
 
-  printf("Box: (y,t)=(%d,%ld)\n", clip.thresh_pos, clip.thresh_t);
+  clip_print(&clip, &header);
 
   int16_t *sample_ptr;
   while(1)

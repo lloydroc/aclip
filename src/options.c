@@ -3,7 +3,7 @@
 void
 options_usage(char *progname)
 {
-  printf("\nUsage: %s [OPTIONS] TEXT\n\n", progname);
+  printf("\nUsage: %s [OPTIONS]\n\n", progname);
   printf("Options:\n\
 -h, --help                  Print this menu\n\
 --sampling-rate INTEGER     Sampling Rate [48000]\n\
@@ -146,6 +146,5 @@ options_parse(struct options *options, int argc, char *argv[])
 
 void options_destroy(struct options *options)
 {
-  free(options->alsa_device);
   free(options->filepath);
 }

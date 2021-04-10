@@ -45,4 +45,7 @@ clip_wavfile_write(struct Clip *clip, char *pcm_buffer, size_t pcm_buffer_size);
 int
 clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer, size_t pcm_buffer_size);
 
+void
+clip_print(struct Clip *clip, struct wavheader *header);
+
 #endif

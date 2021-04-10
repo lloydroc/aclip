@@ -194,3 +194,15 @@ clip_wavfile_close(struct Clip *clip, struct wavheader *header, char *pcm_buffer
 
   return ret;
 }
+
+void
+clip_print(struct Clip *clip, struct wavheader *header)
+{
+  float percent_y;
+  float min_t;
+
+  percent_y = (float) clip->thresh_pos / (float) UINT16_MAX;
+  min_t = (float) clip->thresh_t / (float) header->sampleRate;
+
+  printf("Trigger Audio Level: %d (%0.2f%%), Minimum clip duration %0.2fs\n", clip->thresh_pos, percent_y, min_t);
+}

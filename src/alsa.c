@@ -50,11 +50,11 @@ alsa_pcm_parameters_set(struct Alsa *alsa)
 
   /* Use a buffer large enough to hold one period */
   snd_pcm_hw_params_get_rate(alsa->params, &val, &dir);
-  printf("rate: %d ", val);
+  printf("Sampling rate: %d, ", val);
   snd_pcm_hw_params_get_channels(alsa->params, &val);
-  printf("channels: %d ", val);
+  printf("Channels: %d, ", val);
   snd_pcm_hw_params_get_period_size(alsa->params, &alsa->frames, &dir);
-  printf("frames: %ld\n", alsa->frames);
+  printf("Frames: %ld\n", alsa->frames);
 
   alsa->pcm_buffer = malloc(alsa->pcm_buffer_size);
   if(alsa->pcm_buffer == 0)
